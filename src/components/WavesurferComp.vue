@@ -31,6 +31,7 @@ const readyHandler = (duration: any) => {
 };
 const readyWaveSurferHandler = (ws: WaveSurfer) => {
   waveSurfer.value = ws;
+  console.log(ws)
 };
 </script>
 

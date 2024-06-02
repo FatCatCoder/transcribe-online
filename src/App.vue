@@ -2,12 +2,14 @@
 import HelloWorld from './components/HelloWorld.vue';
 import PWABadge from './components/PWABadge.vue';
 import WavesurferComp from './components/WavesurferComp.vue';
+import WSComp from './components/WSComp.vue';
 </script>
 
 <template>
   <h1 class="text-3xl font-bold text-indigo-500">Transcribe Online!</h1>
   <div>
-    <WavesurferComp />
+    <!-- <WavesurferComp /> -->
+    <WSComp />
   </div>
   <HelloWorld msg="vite-project" />
   <PWABadge />

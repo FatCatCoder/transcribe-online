@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@meersagor/wavesurfer-vue": "^0.1.0",
+    "primevue": "^3.52.0",
     "vue": "^3.4.26"
   },
   "devDependencies": {
@@ -21,9 +22,5 @@
     "vite": "^5.2.10",
     "vite-plugin-pwa": "^0.20.0",
     "workbox-window": "^7.1.0"
-  },
-  "overrides": {
-    "sharp": "0.32.6",
-    "sharp-ico": "0.1.5"
   }
 }
