@@ -4,6 +4,7 @@ import WaveSurfer from 'wavesurfer.js'
 import { WaveSurferPlayer } from '@meersagor/wavesurfer-vue'
 import RegionsPlugin from "wavesurfer.js/dist/plugins/regions.js"
 import Slider from 'primevue/slider';
+import InputText from 'primevue/inputtext'
 
 
 
@@ -17,14 +18,7 @@ const options = ref({
   barRadius: 8,
   duration: 80,
   url: "https://revews-bucket.s3.ap-southeast-1.amazonaws.com/a06mmMU3sgnzuUkH4OiHvyuUgCFdLSnJaDLBao7y.webm",
-  plugins: [
-    // WaveSurfer.Regions.create({
-    //   regionsMinLength: 2,
-    //   dragSelection: {
-    //     slop: 5
-    //   }
-    // })
-  ]
+  plugins: []
 })
 
 const currentTime = ref<string>('00:00')
@@ -32,10 +26,11 @@ const totalDuration = ref<string>('00:00')
 const waveSurfer = ref<WaveSurfer | null>(null)
 const wsRegions = ref<RegionsPlugin | null>(null)
 const currentRegion = ref<any>(null)
-const isLoopingEnabled = ref<boolean>(false)
+const isLoopingEnabled = ref<boolean>(true)
 const start = ref<any>(false)
 const end = ref<any>(false)
 const speed = ref<number>(100)
+const volume = ref<number>(100)
 
 
 const formatTime = (seconds: number): string => [seconds / 60, seconds % 60].map((v) => `0${Math.floor(v)}`.slice(-2)).join(':')
@@ -71,24 +66,10 @@ const readyWaveSurferHandler = (ws: WaveSurfer) => {
 
     wsRegions?.value?.on('region-created', (region) => {
        
-    });
-
-    wsRegions?.value?.on('region-in', (region) => {
-        console.log('region-in', region);
-        currentRegion.value = region;
       });
+    
+    setupRegionLoopingEvents();
 
-      wsRegions?.value?.on('region-out', (region) => {
-        console.log('region-out', region, currentRegion.value.id === region.id);
-        
-        if (currentRegion.value.id === region.id) {
-          if (isLoopingEnabled.value) {
-            region.play();
-          } else {
-            currentRegion.value = null;
-          }
-        }
-      });
 
       wsRegions?.value?.on('region-clicked', (region, e) => {
         e.stopPropagation(); // prevent triggering a click on the waveform
@@ -105,9 +86,33 @@ const readyWaveSurferHandler = (ws: WaveSurfer) => {
 
 }
 
+
+const setupRegionLoopingEvents = () => {
+      wsRegions?.value?.on('region-in', (region) => {
+        console.log('region-in', region);
+        currentRegion.value = region;
+      });
+
+      wsRegions?.value?.on('region-out', (region) => {
+        console.log('region-out', region, currentRegion.value.id === region.id);
+        
+        if (currentRegion.value.id === region.id) {
+          if (isLoopingEnabled.value) {
+            region.play();
+          } else {
+            currentRegion.value = null;
+          }
+        }
+      });
+    }
+
+    
+
 const clearRegions = () => {
   if (waveSurfer.value) {
     wsRegions.value?.clearRegions()
+    // wsRegions?.value?.unAll()
+    // setupRegionLoopingEvents();
   }
 }
 
@@ -117,6 +122,23 @@ const loopRegion = () => {
 
 const togglePlay = () => {
     waveSurfer?.value?.playPause()
+}
+
+const onSpeedSliderChange = () => {
+  console.log('onSpeedSliderChange')
+
+  const preservePitch = true;
+  waveSurfer?.value?.setPlaybackRate(speed.value / 100 , preservePitch)
+  waveSurfer?.value?.play()
+
+}
+
+const onVolumeSliderChange = () => {
+  console.log('onVolumeSliderChange')
+
+  waveSurfer?.value?.setVolume(volume.value / 100)
+  waveSurfer?.value?.play()
+
 }
 
 </script>
@@ -136,11 +158,14 @@ const togglePlay = () => {
     <button @click="loopRegion" :style="{ minWidth: '5em' }">{{ isLoopingEnabled ? 'Disable Loop' : 'Enable Loop' }}</button>
     <button @click="clearRegions" :style="{ minWidth: '5em' }">Clear Loops</button>
     
-    <div class="card flex justify-center">
-        <div class="w-[14rem]">
-            <InputText v-model.number="speed" class="w-full mb-3" />
-            <Slider v-model="speed" class="w-full" :min="20" :max="120" :step="5" />
-        </div>
+    <div class="flex flex-col gap-2 card flex justify-center w-[24rem] mx-auto">
+      <label for="username">Speed: {{speed}}%</label>
+      <Slider v-model="speed" @change="onSpeedSliderChange" class="w-full" :min="20" :max="150" :step="5" />      
+    </div>
+
+    <div class="flex flex-col gap-2 card flex justify-center w-[24rem] mx-auto">
+      <label for="username">Volume: {{volume}}%</label>
+      <Slider v-model="volume" @change="onVolumeSliderChange" class="w-full" :min="0" :max="100" :step="5" />      
     </div>
 
   </main>
