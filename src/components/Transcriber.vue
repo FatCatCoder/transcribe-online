@@ -10,7 +10,8 @@ import InputText from 'primevue/inputtext'
 
 
 const options = ref({
-  height: 48,
+  height: 120,
+  width: '80vw',
   waveColor: 'gray',
   progressColor: 'red',
   barGap: 5,
@@ -31,6 +32,8 @@ const start = ref<any>(false)
 const end = ref<any>(false)
 const speed = ref<number>(100)
 const volume = ref<number>(100)
+const zoom = ref<number>(100)
+const isPlaying = ref<boolean>(false)
 
 
 const formatTime = (seconds: number): string => [seconds / 60, seconds % 60].map((v) => `0${Math.floor(v)}`.slice(-2)).join(':')
@@ -122,6 +125,8 @@ const loopRegion = () => {
 
 const togglePlay = () => {
     waveSurfer?.value?.playPause()
+
+    isPlaying.value = waveSurfer?.value?.isPlaying() ?? false;
 }
 
 const onSpeedSliderChange = () => {
@@ -130,7 +135,6 @@ const onSpeedSliderChange = () => {
   const preservePitch = true;
   waveSurfer?.value?.setPlaybackRate(speed.value / 100 , preservePitch)
   waveSurfer?.value?.play()
-
 }
 
 const onVolumeSliderChange = () => {
@@ -138,34 +142,54 @@ const onVolumeSliderChange = () => {
 
   waveSurfer?.value?.setVolume(volume.value / 100)
   waveSurfer?.value?.play()
+}
 
+const onZoomSliderChange = () => {
+  console.log('onZoomSliderChange')
+
+  waveSurfer?.value?.zoom(zoom.value)
+}
+
+const themeToggle = () => {
+  let x = document.childNodes[1];
+
+  if(x.classList.contains('dark'))
+    x.classList.replace('dark', 'light')
+  else
+    x.classList.replace('light', 'dark')
 }
 
 </script>
 
 <template>
   <main>
-    <h1>WaveSurferPlayer Using Components</h1>
     <WaveSurferPlayer
       :options="options"
       @timeupdate="(time: number) => timeUpdateHandler(time)"
       @ready="(duration: number) => readyHandler(duration)"
       @waveSurfer="(ws: WaveSurfer) => readyWaveSurferHandler(ws)"
     />
+
     <p>currentTime: {{ currentTime }}</p>
     <p>totalDuration: {{ totalDuration }}</p>
-    <button @click="togglePlay" :style="{ minWidth: '5em' }">Play</button>
+    <button @click="togglePlay" :style="{ minWidth: '5em' }">{{!isPlaying? "Play": "Pause" }}</button>
     <button @click="loopRegion" :style="{ minWidth: '5em' }">{{ isLoopingEnabled ? 'Disable Loop' : 'Enable Loop' }}</button>
     <button @click="clearRegions" :style="{ minWidth: '5em' }">Clear Loops</button>
+    <button @click="themeToggle" :style="{ minWidth: '5em' }">Theme</button>
     
     <div class="flex flex-col gap-2 card flex justify-center w-[24rem] mx-auto">
-      <label for="username">Speed: {{speed}}%</label>
+      <label for="spped">Speed: {{speed}}%</label>
       <Slider v-model="speed" @change="onSpeedSliderChange" class="w-full" :min="20" :max="150" :step="5" />      
     </div>
 
     <div class="flex flex-col gap-2 card flex justify-center w-[24rem] mx-auto">
-      <label for="username">Volume: {{volume}}%</label>
+      <label for="volume">Volume: {{volume}}%</label>
       <Slider v-model="volume" @change="onVolumeSliderChange" class="w-full" :min="0" :max="100" :step="5" />      
+    </div>
+
+    <div class="flex flex-col gap-2 card flex justify-center w-[24rem] mx-auto">
+      <label for="zoom">Zoom: {{zoom}}%</label>
+      <Slider v-model="zoom" @change="onZoomSliderChange" class="w-full" :min="10" :max="500" :step="10" />      
     </div>
 
   </main>

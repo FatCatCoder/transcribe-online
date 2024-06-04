@@ -1,18 +1,17 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue';
 import PWABadge from './components/PWABadge.vue';
-import WavesurferComp from './components/WavesurferComp.vue';
-import WSComp from './components/WSComp.vue';
+import Transcriber from './components/Transcriber.vue';
 </script>
 
 <template>
+  <div :class="w-25">
   <h1 class="text-3xl font-bold text-indigo-500">Transcribe Online!</h1>
   <div>
-    <!-- <WavesurferComp /> -->
-    <WSComp />
+    <Transcriber />
   </div>
-  <HelloWorld msg="vite-project" />
+
   <PWABadge />
+  </div>
 </template>
 
 <style scoped>
