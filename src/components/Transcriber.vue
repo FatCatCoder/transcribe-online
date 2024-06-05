@@ -4,7 +4,7 @@ import WaveSurfer from 'wavesurfer.js'
 import { WaveSurferPlayer } from '@meersagor/wavesurfer-vue'
 import RegionsPlugin from "wavesurfer.js/dist/plugins/regions.js"
 import Slider from 'primevue/slider';
-import InputText from 'primevue/inputtext'
+import FileUpload from 'primevue/fileupload'
 
 
 
@@ -18,7 +18,6 @@ const options = ref({
   barWidth: 5,
   barRadius: 8,
   duration: 80,
-  url: "https://revews-bucket.s3.ap-southeast-1.amazonaws.com/a06mmMU3sgnzuUkH4OiHvyuUgCFdLSnJaDLBao7y.webm",
   plugins: []
 })
 
@@ -112,8 +111,15 @@ const setupRegionLoopingEvents = () => {
     
 
 const clearRegions = () => {
-  if (waveSurfer.value) {
-    wsRegions.value?.clearRegions()
+  if (waveSurfer.value && wsRegions?.value) {
+    console.log('getRegions ', wsRegions?.value?.getRegions())
+    console.log(wsRegions?.value)
+    let regionLoops = wsRegions?.value?.getRegions();
+    regionLoops.forEach(x => {
+      console.log(x)
+      x.remove();
+    })
+    // wsRegions?.value?.clearRegions()    
     // wsRegions?.value?.unAll()
     // setupRegionLoopingEvents();
   }
@@ -151,13 +157,20 @@ const onZoomSliderChange = () => {
 }
 
 const themeToggle = () => {
-  let x = document.childNodes[1];
+  let x = document.childNodes[1] as HTMLElement; 
 
   if(x.classList.contains('dark'))
     x.classList.replace('dark', 'light')
   else
     x.classList.replace('light', 'dark')
 }
+
+const customBase64Uploader = async (event) => {
+  const file = event.files[0];
+  const url = URL.createObjectURL(file);
+  console.log('url', url)
+  waveSurfer?.value?.load(url);
+};
 
 </script>
 
@@ -172,6 +185,7 @@ const themeToggle = () => {
 
     <p>currentTime: {{ currentTime }}</p>
     <p>totalDuration: {{ totalDuration }}</p>
+    <FileUpload mode="basic" :auto="true" name="demo[]" accept="audio/*" @select="customBase64Uploader" :maxFileSize="50000000" :customUpload="true" @upload="customBase64Uploader" />
     <button @click="togglePlay" :style="{ minWidth: '5em' }">{{!isPlaying? "Play": "Pause" }}</button>
     <button @click="loopRegion" :style="{ minWidth: '5em' }">{{ isLoopingEnabled ? 'Disable Loop' : 'Enable Loop' }}</button>
     <button @click="clearRegions" :style="{ minWidth: '5em' }">Clear Loops</button>
