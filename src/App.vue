@@ -11,6 +11,8 @@ import Transcriber from './components/Transcriber.vue';
   </div>
 
   <PWABadge />
+
+  <p><small>Created by <a href="https://github.com/FatCatCoder">FatCatCoder</a></small></p>
   </div>
 </template>
 

@@ -75,6 +75,10 @@
 
 
 
+
+
+
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -153,4 +157,16 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+
+html.light  body {
+  color: #213547;
+  background-color: #ffffff;
+}
+html.light a:hover {
+  color: #747bff;
+}
+html.light button {
+  background-color: #f9f9f9;
 }

@@ -61,7 +61,6 @@ const readyWaveSurferHandler = (ws: WaveSurfer) => {
     });
 
     wsRegions?.value?.on('region-updated', function (region) {
-        console.log('Updated region', region);
         start.value = region.start;
         end.value = region.end;
     });
@@ -91,13 +90,10 @@ const readyWaveSurferHandler = (ws: WaveSurfer) => {
 
 const setupRegionLoopingEvents = () => {
       wsRegions?.value?.on('region-in', (region) => {
-        console.log('region-in', region);
         currentRegion.value = region;
       });
 
       wsRegions?.value?.on('region-out', (region) => {
-        console.log('region-out', region, currentRegion.value.id === region.id);
-        
         if (currentRegion.value.id === region.id) {
           if (isLoopingEnabled.value) {
             region.play();
@@ -112,16 +108,16 @@ const setupRegionLoopingEvents = () => {
 
 const clearRegions = () => {
   if (waveSurfer.value && wsRegions?.value) {
-    console.log('getRegions ', wsRegions?.value?.getRegions())
-    console.log(wsRegions?.value)
     let regionLoops = wsRegions?.value?.getRegions();
     regionLoops.forEach(x => {
       console.log(x)
-      x.remove();
+      try {
+        x.remove();
+      }
+      catch(err) {
+        // ignore
+      }
     })
-    // wsRegions?.value?.clearRegions()    
-    // wsRegions?.value?.unAll()
-    // setupRegionLoopingEvents();
   }
 }
 
@@ -136,23 +132,17 @@ const togglePlay = () => {
 }
 
 const onSpeedSliderChange = () => {
-  console.log('onSpeedSliderChange')
-
   const preservePitch = true;
   waveSurfer?.value?.setPlaybackRate(speed.value / 100 , preservePitch)
   waveSurfer?.value?.play()
 }
 
 const onVolumeSliderChange = () => {
-  console.log('onVolumeSliderChange')
-
   waveSurfer?.value?.setVolume(volume.value / 100)
   waveSurfer?.value?.play()
 }
 
 const onZoomSliderChange = () => {
-  console.log('onZoomSliderChange')
-
   waveSurfer?.value?.zoom(zoom.value)
 }
 
@@ -168,7 +158,6 @@ const themeToggle = () => {
 const customBase64Uploader = async (event) => {
   const file = event.files[0];
   const url = URL.createObjectURL(file);
-  console.log('url', url)
   waveSurfer?.value?.load(url);
 };
 
