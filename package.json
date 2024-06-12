@@ -11,6 +11,8 @@
   "dependencies": {
     "@meersagor/wavesurfer-vue": "^0.1.0",
     "primevue": "^3.52.0",
+    "sharp": "^0.33.4",
+    "sharp-ico": "^0.1.5",
     "vue": "^3.4.26"
   },
   "devDependencies": {

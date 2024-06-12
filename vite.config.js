@@ -13,7 +13,7 @@ export default defineConfig({
       injectRegister: false,
 
       pwaAssets: {
-        disabled: true,
+        disabled: false,
         config: true,
       },
 
@@ -22,6 +22,13 @@ export default defineConfig({
         short_name: 'vite-project',
         description: 'vite-project',
         theme_color: '#ffffff',
+        icons: [
+          {
+            src: 'favicon.png',
+            sizes: '512x512',
+            type: 'image/png'
+          }
+        ]
       },
 
       workbox: {
@@ -31,7 +38,7 @@ export default defineConfig({
       },
 
       devOptions: {
-        enabled: false,
+        enabled: true,
         navigateFallback: 'index.html',
         suppressWarnings: true,
         type: 'module',
