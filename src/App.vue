@@ -4,7 +4,7 @@ import Transcriber from './components/Transcriber.vue';
 </script>
 
 <template>
-  <div :class="w-25">
+  <div class="w-25">
   <h1 class="text-3xl font-bold text-indigo-500">Transcribe Online!</h1>
   <div>
     <Transcriber />

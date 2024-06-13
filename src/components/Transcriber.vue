@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import WaveSurfer from 'wavesurfer.js'
 import { WaveSurferPlayer } from '@meersagor/wavesurfer-vue'
 import RegionsPlugin from "wavesurfer.js/dist/plugins/regions.js"
+import Minimap from 'wavesurfer.js/dist/plugins/minimap.js'
 import Slider from 'primevue/slider';
 import FileUpload from 'primevue/fileupload'
 
@@ -18,7 +19,15 @@ const options = ref({
   barWidth: 5,
   barRadius: 8,
   duration: 80,
-  plugins: []
+  plugins: [
+    // Register the plugin
+    Minimap.create({
+      height: 20,
+      waveColor: '#ddd',
+      progressColor: '#999',
+      // the Minimap takes all the same options as the WaveSurfer itself
+    }),
+  ]
 })
 
 const currentTime = ref<string>('00:00')
@@ -57,7 +66,7 @@ const readyWaveSurferHandler = (ws: WaveSurfer) => {
 
     // setup regions //
     wsRegions?.value?.enableDragSelection({
-        color: 'rgba(255, 0, 0, 0.1)',
+        color: 'rgba(50, 200, 100, 0.2)',
     });
 
     wsRegions?.value?.on('region-updated', function (region) {
@@ -172,9 +181,13 @@ const customBase64Uploader = async (event) => {
       @waveSurfer="(ws: WaveSurfer) => readyWaveSurferHandler(ws)"
     />
 
-    <p>currentTime: {{ currentTime }}</p>
-    <p>totalDuration: {{ totalDuration }}</p>
-    <FileUpload mode="basic" :auto="true" name="demo[]" accept="audio/*" @select="customBase64Uploader" :maxFileSize="50000000" :customUpload="true" @upload="customBase64Uploader" />
+    <div class="flex justify-center">
+      <p>{{ currentTime }}</p>
+      <span> / </span>
+      <p>{{ totalDuration }}</p>
+    </div>
+
+    <FileUpload mode="basic" :auto="true" name="demo[]" @select="customBase64Uploader" :maxFileSize="50000000" :customUpload="true" @upload="customBase64Uploader" />
     <button @click="togglePlay" :style="{ minWidth: '5em' }">{{!isPlaying? "Play": "Pause" }}</button>
     <button @click="loopRegion" :style="{ minWidth: '5em' }">{{ isLoopingEnabled ? 'Disable Loop' : 'Enable Loop' }}</button>
     <button @click="clearRegions" :style="{ minWidth: '5em' }">Clear Loops</button>
@@ -192,7 +205,7 @@ const customBase64Uploader = async (event) => {
 
     <div class="flex flex-col gap-2 card flex justify-center w-[24rem] mx-auto">
       <label for="zoom">Zoom: {{zoom}}%</label>
-      <Slider v-model="zoom" @change="onZoomSliderChange" class="w-full" :min="10" :max="500" :step="10" />      
+      <Slider v-model="zoom" @change="onZoomSliderChange" class="w-full" :min="1" :max="100" :step="1" />      
     </div>
 
   </main>
